@@ -2,7 +2,9 @@ Task 1:
  Explanation:
 
 In this implementation, the simulateEvent function takes an array of outcomes with their respective probabilities. It generates a random number based on the total sum of probabilities and selects the outcome based on the random number.
+
 The "runFunction" function runs the simulation for a specified number of occurrences and keeps track of the counts for each outcome. It then displays the result.
+
 We can customize the outcomes array and the numOccurrences variable to match your specific event and biasness
 
 Implementation:
