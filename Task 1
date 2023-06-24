@@ -1,0 +1,57 @@
+Task 1:
+ Explanation:
+
+In this implementation, the simulateEvent function takes an array of outcomes with their respective probabilities. It generates a random number based on the total sum of probabilities and selects the outcome based on the random number.
+The "runFunction" function runs the simulation for a specified number of occurrences and keeps track of the counts for each outcome. It then displays the result.
+We can customize the outcomes array and the numOccurrences variable to match your specific event and biasness
+
+Implementation:
+
+function simulateEvent(outcomes) {
+  // Calculate the total sum of probabilities
+  const totalProbability = outcomes.reduce((sum, outcome) => sum + outcome.probability, 0);
+
+  // Generate a random number between 0 and the total probability
+  const randomNumber = Math.random() * totalProbability;
+
+  // Iterate through the outcomes and find the corresponding outcome based on the random number
+  let cumulativeProbability = 0;
+  for (let i = 0; i < outcomes.length; i++) {
+    const outcome = outcomes[i];
+    cumulativeProbability += outcome.probability;
+    if (randomNumber <= cumulativeProbability) {
+      return outcome.value;
+    }
+  }
+
+  // If no outcome is found, return null (shouldn't happen in normal cases)
+  return null;
+}
+
+function runFunction(outcomes, numOccurrences) {
+  // Initialize a count object to store the occurrences of each outcome
+  const counts = {};
+  outcomes.forEach(outcome => {
+    counts[outcome.value] = 0;
+  });
+
+  // Simulate the event for the specified number of occurrences
+  for (let i = 0; i < numOccurrences; i++) {
+    const outcome = simulateEvent(outcomes);
+    counts[outcome]++;
+  }
+
+  // Display the result
+  Object.entries(counts).forEach(([outcome, count]) => {
+    console.log(`${outcome}: ${count}`);
+  });
+}
+
+// Example usage
+const outcomes = [
+  { value: 'Head', probability: 35 },
+  { value: 'Tail', probability: 65 },
+];
+const numOccurrences = 1000;
+
+runFunction(outcomes, numOccurrences);
