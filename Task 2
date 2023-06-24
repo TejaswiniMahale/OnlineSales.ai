@@ -1,0 +1,73 @@
+Task 2:
+Explanation:
+
+In this Solution, I have a queue expressionQueue where we store the mathematical expressions. I add the expressions to the queue, and when the processing starts, we check if we have reached the rate limit. If we have, we wait for 1 second before allowing more requests. We continue processing expressions from the queue as long as the rate limit is not reached.
+
+The evaluateExpression function is responsible for evaluating each expression. In this example, we use the math.evaluate function from the mathjs library to evaluate the expressions. You can replace it with the actual API call or evaluation method based on your requirements.
+The processExpressions function is the main loop that retrieves expressions from the queue and evaluates them. It checks if the expression is the end signal ('end') and stops the processing if it is.
+
+The handleRateLimiting function handles the rate limiting logic. It checks if the rate limit is reached and either waits or continues processing based on the current rate.
+
+By implementing this approach, you can handle multiple mathematical expressions using a public Web API while respecting rate limits and handling concurrent requests effectively.
+
+Implementation:
+
+const math = require('mathjs');
+// Queue to store the expressions
+const expressionQueue = [];
+// Add expressions to the queue
+expressionQueue.push('2 * 4 * 4');
+expressionQueue.push('5 / (7 - 5)');
+expressionQueue.push('sqrt(5^2 - 4^2)');
+expressionQueue.push('sqrt(-3^2 - 4^2)');
+expressionQueue.push('end'); // Indicate the end of expressions
+// Rate limiting variables
+const MAX_REQUESTS_PER_SECOND = 50;
+let requestsCount = 0;
+let interval;
+// Function to evaluate an expression using the Web API
+async function evaluateExpression(expression) {
+  try {
+    // Call the Web API or perform the required evaluation
+    const result = math.evaluate(expression);
+    // Display the result
+    console.log(`${expression} => ${result}`);
+  } catch (error) {
+    console.error(`Error evaluating expression: ${expression}`);
+    console.error(error);
+  }
+}
+// Function to process expressions from the queue
+async function processExpressions() {
+  while (expressionQueue.length > 0) {
+    // Get the expression from the queue
+    const expression = expressionQueue.shift();
+    // Check if it's the end signal
+    if (expression === 'end') {
+      clearInterval(interval);
+      break;
+    }
+    // Evaluate the expression using the Web API
+    await evaluateExpression(expression);
+  }
+}
+// Function to handle rate limiting
+function handleRateLimiting() {
+  // Check if we have reached the limit
+  if (requestsCount >= MAX_REQUESTS_PER_SECOND) {
+    // Wait for 1 second before allowing more requests
+    clearInterval(interval);
+    setTimeout(() => {
+      requestsCount = 0;
+      interval = setInterval(handleRateLimiting, 1000);
+    }, 1000);
+  } else {
+    // Continue processing expressions
+    if (expressionQueue.length > 0) {
+      processExpressions();
+      requestsCount++;
+    }
+  }
+}
+// Start processing expressions with rate limiting
+interval = setInterval(handleRateLimiting, 1000);
